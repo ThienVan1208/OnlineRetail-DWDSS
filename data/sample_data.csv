@@ -1,0 +1,6 @@
+invoice_no,stock_code,description,quantity,invoice_date,unit_price,customer_id,country
+10001,A001,Notebook,2,2026-01-05 10:00:00,5.00,C001,Vietnam
+10001,A002,Pen,5,2026-01-05 10:00:00,1.50,C001,Vietnam
+10002,A003,Folder,3,2026-01-08 14:30:00,2.50,C002,Vietnam
+10003,A001,Notebook,1,2026-02-01 09:15:00,5.00,C001,Vietnam
+10004,A004,Stapler,1,2026-02-10 16:45:00,8.00,C003,Singapore
