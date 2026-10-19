@@ -12,3 +12,8 @@ src/dss/              RFM and what-if analysis modules
 src/app/              Streamlit dashboard and UI components
 ```
 
+HOW TO RUN:
+Import data:
+```bash
+py src/etl/etl.py
+```
