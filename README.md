@@ -1,21 +1,54 @@
-# Online Retail DW-DSS
-dataset: https://www.kaggle.com/datasets/carrie1/ecommerce-data
+# Online Retail Data Warehouse & DSS
 
-## Structure
+Project components: MySQL star schema, ETL pipeline, OLAP dashboard (Streamlit),
+RFM customer segmentation with K-Means, and promotion what-if simulation.
 
-```text
-data/                 Sample input data and the input-column contract
-docs/                 Project report and presentation files
-src/sql/              Warehouse schema and OLAP query examples
-src/etl/              Data loading and cleaning pipeline
-src/dss/              RFM and what-if analysis modules
-src/app/              Streamlit dashboard and UI components
+## Prerequisites
+- Python 3.10+
+- MySQL 8.0+
+- The Online Retail CSV dataset stored as `data/data.csv` (dataset is not included in this archive).
+
+## Setup (PowerShell)
+```powershell
+cd D:\Downloads\OnlineRetail-DWDSS
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+Copy-Item .env.example .env
+notepad .env
+```
+Fill in your MySQL password locally in `.env`. Never commit `.env`.
+
+## Database and ETL
+1. Start MySQL Server.
+2. In MySQL Workbench, run `src/sql/create_tables.sql`.
+3. Put the source CSV at `data/data.csv`.
+4. Run ETL:
+```powershell
+python -m src.etl.etl
+```
+The ETL appends rows. For a clean re-run, use the clear-data utility only after
+confirming that the existing data can be deleted:
+```powershell
+python -m src.etl.clear_data
 ```
 
-Report: https://www.overleaf.com/project/6ad590f280348f75895d4188/share#fbebbe90b01bde0b365214946895453b8922b774bf1bb4d5
-
-HOW TO RUN:
-Import data:
-```bash
-py src/etl/etl.py
+## OLAP Dashboard
+```powershell
+streamlit run src/app/main.py
 ```
+Dashboard includes KPI cards, monthly revenue, country revenue, top products,
+weekday revenue and a country revenue ranking using `DENSE_RANK()`.
+
+## DSS modules
+- `src/dss/rfm_clustering.py`: RFM extraction, log transform, standardization,
+  K-Means and cluster summaries.
+- `src/dss/promotion_simulator.py`: promotion profitability simulation and
+  sensitivity analysis.
+
+## Important
+This archive was assembled from the source ZIP supplied for review. The original
+CSV, project-specific automated tests, and course rubric were not present.
+Run the pipeline locally with the course dataset and verify results against the
+team's rubric before submission.
