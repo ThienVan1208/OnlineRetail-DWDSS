@@ -5,3 +5,5 @@ python-dotenv>=1.0
 streamlit>=1.40
 numpy>=1.26
 scikit-learn>=1.5
+plotly>=5.18.0
+matplotlib>=3.8.0
