@@ -1,18 +1,14 @@
 import os
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, text
+import sys
+from sqlalchemy import text
 
-# Load environment variables
-load_dotenv()
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
-DB_USER = os.getenv("DB_USER")
-DB_PASS = os.getenv("DB_PASS")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
+from src.db_config import create_mysql_engine
 
-connection_string = f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-engine = create_engine(connection_string)
+engine = create_mysql_engine(connect_timeout=15)
 
 def truncate_tables():    
     # Order of tables to clear

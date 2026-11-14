@@ -7,3 +7,4 @@ numpy>=1.26
 scikit-learn>=1.5
 plotly>=5.18.0
 matplotlib>=3.8.0
+certifi>=2024.0

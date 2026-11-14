@@ -1,31 +1,20 @@
 import os
+import sys
 import time
 import pandas as pd
-from dotenv import load_dotenv
-from sqlalchemy import create_engine
-from urllib.parse import quote_plus
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+from src.db_config import create_mysql_engine
 
 start_time = time.time()
 
 # ---------------------------------------------------------
 # DATABASE CONFIGURATION
 # ---------------------------------------------------------
-load_dotenv()
-
-DB_USER = os.getenv("DB_USER", "root")
-DB_PASS = os.getenv("DB_PASS", "")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "3306")
-DB_NAME = os.getenv("DB_NAME", "retail_dw")
-
-# Encode password to handle special characters such as @, #, %
-encoded_password = quote_plus(DB_PASS)
-
-connection_string = (
-    f"mysql+pymysql://{DB_USER}:{encoded_password}" f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-)
-
-engine = create_engine(connection_string, pool_pre_ping=True)
+engine = create_mysql_engine(connect_timeout=30, pool_pre_ping=True)
 
 # Test database connection
 try:

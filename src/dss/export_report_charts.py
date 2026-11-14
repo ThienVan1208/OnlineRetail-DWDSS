@@ -59,10 +59,9 @@ def main():
     plt.close()
     print("Saved:", eval_path)
 
-    # 2. WHAT-IF PROMOTION IMPACT AND SENSITIVITY MATRIX
-    fig, (ax_bar, ax_heat) = plt.subplots(1, 2, figsize=(14.0, 5.0), dpi=300)
-
-    # Panel A: Bar chart
+    # 2. WHAT-IF PROMOTION IMPACT AND SENSITIVITY MATRIX (SPLIT INTO SEPARATE CHARTS)
+    # 2A. Panel A: Bar chart - What-If profit impact by segment
+    fig_bar, ax_bar = plt.subplots(figsize=(7.8, 4.5), dpi=300)
     segments = ["Champions\n(VIP)", "Loyal\nCustomers", "Potential\nPromising", "At Risk\nHibernating", "All Segments\n(Total)"]
     baseline_profit = np.array([2326.26, 836.90, 180.74, 210.99, 3554.88])
     simulated_profit = np.array([1994.19, 754.21, 168.93, 203.78, 3121.12])
@@ -70,8 +69,8 @@ def main():
 
     x = np.arange(len(segments))
     width = 0.35
-    ax_bar.bar(x - width/2, baseline_profit, width, label="Baseline profit (Pre-campaign)", color="#64748B", alpha=0.9)
-    ax_bar.bar(x + width/2, simulated_profit, width, label="Simulated profit (10% discount)", color="#2563EB", alpha=0.9)
+    ax_bar.bar(x - width/2, baseline_profit, width, label="Lợi nhuận cơ sở (Trước chiến dịch)", color="#64748B", alpha=0.9)
+    ax_bar.bar(x + width/2, simulated_profit, width, label="Lợi nhuận mô phỏng (Giảm giá 10%)", color="#2563EB", alpha=0.9)
 
     for i in range(len(segments)):
         val = delta_profit[i]
@@ -82,20 +81,27 @@ def main():
             textcoords="offset points",
             ha="center",
             va="bottom",
-            fontsize=7.8,
+            fontsize=8.0,
             fontweight="bold",
             color="#DC2626",
         )
 
-    ax_bar.set_ylabel("Profit (thousand GBP)", fontweight="bold")
-    ax_bar.set_title("(a) Profit variance under 10% mass promotion scenario", fontweight="bold", fontsize=11, pad=10)
+    ax_bar.set_ylabel("Lợi nhuận ròng (nghìn GBP)", fontweight="bold")
+    ax_bar.set_title("Biến thiên lợi nhuận ròng kịch bản giảm giá 10% theo phân khúc", fontweight="bold", fontsize=11, pad=10)
     ax_bar.set_xticks(x)
     ax_bar.set_xticklabels(segments)
     ax_bar.set_ylim(0, 4100)
     ax_bar.legend(loc="upper right", framealpha=0.9)
     ax_bar.grid(True, axis="y", linestyle="--", alpha=0.5)
+    fig_bar.tight_layout()
 
-    # Panel B: Sensitivity Matrix Heatmap
+    impact_path = os.path.join(report_img_dir, "whatif_profit_impact.png")
+    plt.savefig(impact_path, dpi=300)
+    plt.close()
+    print("Saved:", impact_path)
+
+    # 2B. Panel B: Heatmap - Sensitivity Matrix
+    fig_heat, ax_heat = plt.subplots(figsize=(7.8, 5.0), dpi=300)
     sens_df = generate_sensitivity_matrix(
         baseline_revenue=8887208.89,
         customer_count=4338,
@@ -117,9 +123,9 @@ def main():
     ax_heat.set_yticks(np.arange(len(y_labels)))
     ax_heat.set_xticklabels(x_labels, fontsize=8.5)
     ax_heat.set_yticklabels(y_labels, fontsize=8.5)
-    ax_heat.set_xlabel("Proposed discount (%)", fontweight="bold", labelpad=6)
-    ax_heat.set_ylabel("Price elasticity of demand (ε)", fontweight="bold")
-    ax_heat.set_title("(b) 2D Net profit lift sensitivity matrix (thousand GBP)", fontweight="bold", fontsize=11, pad=10)
+    ax_heat.set_xlabel("Mức chiết khấu đề xuất (%)", fontweight="bold", labelpad=6)
+    ax_heat.set_ylabel("Độ co giãn của cầu theo giá (ε)", fontweight="bold")
+    ax_heat.set_title("Ma trận độ nhạy 2 chiều biến thiên lợi nhuận ròng ΔΠ (nghìn GBP)", fontweight="bold", fontsize=11, pad=10)
 
     for i in range(len(y_labels)):
         for j in range(len(x_labels)):
@@ -127,14 +133,14 @@ def main():
             text_color = "white" if val < -1000 or val > 500 else "black"
             ax_heat.text(j, i, f"{val:+.0f}k", ha="center", va="center", color=text_color, fontsize=7.2, fontweight="bold")
 
-    cbar = fig.colorbar(im, ax=ax_heat, shrink=0.85, pad=0.03)
-    cbar.set_label("Net profit lift ΔΠ (thousand GBP)", fontsize=8.5)
+    cbar = fig_heat.colorbar(im, ax=ax_heat, shrink=0.88, pad=0.03)
+    cbar.set_label("Biến thiên lợi nhuận ròng ΔΠ (nghìn GBP)", fontsize=8.5)
 
-    fig.tight_layout()
-    whatif_path = os.path.join(report_img_dir, "whatif_simulation.png")
-    plt.savefig(whatif_path, dpi=300)
+    fig_heat.tight_layout()
+    heat_path = os.path.join(report_img_dir, "whatif_sensitivity_matrix.png")
+    plt.savefig(heat_path, dpi=300)
     plt.close()
-    print("Saved:", whatif_path)
+    print("Saved:", heat_path)
 
 
 if __name__ == "__main__":

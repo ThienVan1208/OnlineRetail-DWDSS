@@ -1,30 +1,40 @@
 """Database connection and query caching utilities for the Online Retail dashboard."""
 
 import os
-from urllib.parse import quote_plus
 import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
+
+from src.db_config import create_mysql_engine
 
 load_dotenv()
+
+
+def _get_config(key: str, default: str | None = None) -> str | None:
+    """Read config from Streamlit secrets first, then fallback to environment variables."""
+    try:
+        if key in st.secrets:
+            return str(st.secrets[key])
+    except Exception:
+        pass
+    return os.getenv(key, default)
 
 
 @st.cache_resource(show_spinner=False)
 def get_db_engine():
     """Create and cache the SQLAlchemy Engine pool across Streamlit sessions."""
-    user = os.getenv("DB_USER", "root")
-    password = quote_plus(os.getenv("DB_PASS", "") or "")
-    host = os.getenv("DB_HOST", "localhost")
-    port = os.getenv("DB_PORT", "3306")
-    db_name = os.getenv("DB_NAME", "retail_dw")
-
-    connection_url = f"mysql+pymysql://{user}:{password}@{host}:{port}/{db_name}"
-    return create_engine(
-        connection_url,
-        pool_pre_ping=True,
+    return create_mysql_engine(
+        user=_get_config("DB_USER", "root"),
+        password=_get_config("DB_PASS", ""),
+        host=_get_config("DB_HOST", "localhost"),
+        port=_get_config("DB_PORT", "3306"),
+        db_name=_get_config("DB_NAME", "retail_dw"),
+        use_ssl=_get_config("DB_SSL"),
+        ssl_ca=_get_config("DB_SSL_CA", ""),
+        connect_timeout=10,
         pool_recycle=3600,
-        connect_args={"connect_timeout": 5},
+        pool_pre_ping=True,
     )
 
 

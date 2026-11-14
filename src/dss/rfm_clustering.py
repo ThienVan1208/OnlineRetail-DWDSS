@@ -2,15 +2,14 @@
 Customer RFM segmentation and K-Means clustering.
 """
 
-import os
-from urllib.parse import quote_plus
 import numpy as np
 import pandas as pd
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
+
+from src.db_config import create_mysql_engine
 
 # Customer segment labels by cluster rank (1 is best)
 SEGMENT_LABELS_MAP = {
@@ -68,14 +67,7 @@ SEGMENT_STRATEGY_MAP = {
 
 def get_standalone_engine():
     """Create SQLAlchemy engine from .env variables."""
-    load_dotenv()
-    user = os.getenv("DB_USER", "root")
-    password = quote_plus(os.getenv("DB_PASS", ""))
-    host = os.getenv("DB_HOST", "localhost")
-    port = os.getenv("DB_PORT", "3306")
-    db_name = os.getenv("DB_NAME", "retail_dw")
-    connection_url = f"mysql+pymysql://{user}:{password}@{host}:{port}/{db_name}"
-    return create_engine(connection_url, pool_pre_ping=True)
+    return create_mysql_engine(pool_pre_ping=True)
 
 
 def extract_rfm_from_db(
