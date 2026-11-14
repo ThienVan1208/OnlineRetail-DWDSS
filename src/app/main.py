@@ -69,12 +69,6 @@ def main():
             value=10,
         )
 
-        st.caption(
-            f"retail_dw: {health['fact_sales_count']:,} transactions | "
-            f"{health['dim_customer_count']:,} customers | "
-            f"{min_date} -> {max_date}"
-        )
-
     # Parse date range safely
     if isinstance(date_range, (tuple, list)) and len(date_range) == 2:
         start_date, end_date = date_range

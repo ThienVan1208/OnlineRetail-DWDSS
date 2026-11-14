@@ -179,7 +179,6 @@ def render_olap_tab(params: dict):
     # SUBTAB 1: HIERARCHICAL ROLL-UP (WITH ROLLUP)
     # ------------------------------------------------------------------
     with subtab1:
-        st.caption("Time hierarchy aggregation: Year -> Quarter -> Month using MySQL GROUP BY WITH ROLLUP")
         drill_level = st.radio(
             "Aggregation level:",
             options=["By year", "By quarter", "By month"],

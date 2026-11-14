@@ -59,7 +59,7 @@ def render_segmentation_tab(years: tuple, country: str | None):
     """Tab 3: Customer segmentation via RFM and K-Means++ clustering."""
     st.subheader("Customer segmentation (RFM & K-Means)")
 
-    col_k, col_info = st.columns([1, 2])
+    col_k, _ = st.columns([1, 2])
     with col_k:
         n_clusters = st.slider(
             "Number of clusters (K):",
@@ -68,11 +68,6 @@ def render_segmentation_tab(years: tuple, country: str | None):
             value=4,
             step=1,
             help="Default K=4 segments customers into Champions (VIP), Loyal, Potential, and At Risk.",
-        )
-    with col_info:
-        st.caption(
-            "Methodology: Recency, Frequency, and Monetary distributions are log-transformed ln(x+1) "
-            "and Z-score standardized before fitting K-Means++. Centroids are dynamically ranked by Composite Score."
         )
 
     with st.spinner("Extracting RFM data and training K-Means model..."):
@@ -296,10 +291,6 @@ def render_what_if_tab(years: tuple, country: str | None):
         cust_cnt = int(seg_row["customer_count"])
 
     priors = get_segment_prior(selected_target)
-    st.caption(
-        f"Segment baseline: {cust_cnt:,} customers | "
-        f"Baseline revenue: £{base_rev:,.2f} — {priors['description']}"
-    )
 
     st.divider()
 
